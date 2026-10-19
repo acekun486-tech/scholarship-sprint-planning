@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}我的申请面板{% endblock %}
+{% block content %}
+<h1>{% if session.get('role') == 'counselor' %}申请总览{% else %}我的申请{% endif %}</h1>
+{% if session.get('role') == 'student' %}<p><a class="button" href="{{ url_for('projects') }}">新建申请</a></p>{% endif %}
+<div class="card">
+<div class="table-wrap">
+<table><thead><tr><th>项目</th>{% if session.get('role') == 'counselor' %}<th>学生账号</th>{% endif %}<th>申请人</th><th>状态</th><th>审批意见</th><th>材料</th><th>时间</th><th>操作</th></tr></thead>
+<tbody>
+{% for a in applications %}
+<tr>
+  <td>{{ a.project_title }}</td>{% if session.get('role') == 'counselor' %}<td>{{ a.username }}</td>{% endif %}
+  <td>{{ a.full_name }}（{{ a.student_no }}）</td>
+  <td class="status">{{ a.status }}</td>
+  <td>{{ a.review_comment or '暂无' }}{% if a.reviewed_at %}<br><small class="muted">{{ a.reviewed_at }}</small>{% endif %}</td>
+  <td>
+    {% for item in materials.get(a.id, []) %}<a href="{{ url_for('download_material', material_id=item.id) }}">{{ item.original_name }}</a><br>
+    {% else %}<span class="muted">未上传</span>{% endfor %}
+  </td>
+  <td>{{ a.created_at }}</td>
+  <td>
+    {% if session.get('role') == 'student' and a.status in ('待审批', '退回补充材料') %}
+      <a class="button" href="{{ url_for('upload_material', application_id=a.id) }}">上传材料</a>
+    {% else %}<span class="muted">-</span>{% endif %}
+  </td>
+</tr>
+{% else %}<tr><td colspan="{% if session.get('role') == 'counselor' %}8{% else %}7{% endif %}">暂无申请记录。</td></tr>{% endfor %}
+</tbody></table>
+</div>
+</div>
+{% endblock %}

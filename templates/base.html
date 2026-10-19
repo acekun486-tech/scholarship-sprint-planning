@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}奖助学金管理子系统{% endblock %}</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#202938;background:#f4f6fa}
+    body{margin:0}header{background:#17365d;color:#fff;padding:16px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    header a{color:#fff;text-decoration:none;margin-right:14px}main{max-width:1000px;margin:28px auto;padding:0 18px}
+    .card{background:#fff;border:1px solid #e1e6ef;border-radius:8px;padding:18px;margin:14px 0;box-shadow:0 2px 8px #15294b0a}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+    input,textarea,select{box-sizing:border-box;width:100%;padding:10px;margin:6px 0 14px;border:1px solid #cbd3df;border-radius:7px;font:inherit}
+    button,.button{display:inline-block;background:#2459a9;color:#fff;padding:10px 14px;border:0;border-radius:6px;text-decoration:none;cursor:pointer;font:inherit}
+    button:hover,.button:hover{background:#1c4789}
+    .muted{color:#687386}.flash{padding:12px;border-radius:8px;margin:10px 0;background:#e9eff9}.danger{background:#ffe8e8}.success{background:#e4f6e9}.warning{background:#fff2d7}
+    table{width:100%;border-collapse:collapse;background:#fff}th,td{text-align:left;padding:10px;border-bottom:1px solid #e5e9f0;vertical-align:top}
+    .table-wrap{overflow-x:auto}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}.actions form{margin:0}
+    .button.secondary{background:#5b687b}.button.secondary:hover{background:#46515f}
+    .status{font-weight:600}footer{color:#687386;text-align:center;padding:30px}
+  </style>
+</head>
+<body>
+<header>
+  <div><strong>高校学工平台</strong> · 奖助学金管理</div>
+  <nav>
+    <a href="{{ url_for('index') }}">首页</a><a href="{{ url_for('notices') }}">通知</a><a href="{{ url_for('projects') }}">申请项目</a>
+    {% if session.get('user_id') %}
+      <a href="{{ url_for('dashboard') }}">我的面板</a>
+      {% if session.get('role') == 'counselor' %}<a href="{{ url_for('counselor_applications') }}">审批工作台</a>{% endif %}
+      <span class="muted" style="color:#dce6f5">{{ session.get('username') }}</span>
+      <form method="post" action="{{ url_for('logout') }}" style="display:inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button>退出</button>
+      </form>
+    {% else %}<a href="{{ url_for('login') }}">登录</a>{% endif %}
+  </nav>
+</header>
+<main>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer>课程实验原型 · 请勿直接用于生产环境</footer>
+</body>
+</html>

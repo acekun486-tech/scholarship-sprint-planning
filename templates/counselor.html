@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}辅导员审批工作台{% endblock %}
+{% block content %}
+<h1>辅导员审批工作台</h1>
+{% for a in applications %}
+<div class="card">
+<h3>#{{ a.id }} {{ a.project_title }} · {{ a.full_name }}（{{ a.student_no }}）</h3>
+<p><strong>学生账号：</strong>{{ a.username }}</p><p><strong>申请理由：</strong>{{ a.reason }}</p>
+<p><strong>当前状态：</strong>{{ a.status }}</p><p><strong>已有意见：</strong>{{ a.review_comment or '暂无' }}</p>
+<p><strong>证明材料：</strong>
+{% for item in materials.get(a.id, []) %}<a href="{{ url_for('download_material', material_id=item.id) }}">{{ item.original_name }}</a>{% if not loop.last %}、{% endif %}
+{% else %}<span class="muted">未上传</span>{% endfor %}
+</p>
+{% if a.status == '待审批' %}
+<form method="post" action="{{ url_for('review_application', application_id=a.id) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>审批决定<select name="decision" required>{% for decision in review_decisions %}<option value="{{ decision }}">{{ decision }}</option>{% endfor %}</select></label>
+  <label>审批意见<textarea name="comment" required maxlength="1000" rows="3"></textarea></label>
+  <button type="submit">提交审批</button>
+</form>
+{% else %}<p class="muted">该申请已完成审批，不能重复提交审批结果。</p>{% endif %}
+</div>
+{% else %}<p>暂无申请。</p>{% endfor %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}填写申请{% endblock %}
+{% block content %}
+<div class="card">
+<h1>申请：{{ project.title }}</h1>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>申请人姓名<input name="full_name" value="{{ form.get('full_name', '') }}" required maxlength="80"></label>
+  <label>学号<input name="student_no" value="{{ form.get('student_no', '') }}" required maxlength="40"></label>
+  <label>申请理由<textarea name="reason" required rows="5" maxlength="2000">{{ form.get('reason', '') }}</textarea></label>
+  <button type="submit">提交申请</button>
+  <a class="button secondary" href="{{ url_for('projects') }}">取消</a>
+</form>
+</div>
+{% endblock %}

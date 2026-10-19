@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block content %}
+<div class="card">
+  <p><a href="{{ url_for('projects') }}">返回项目列表</a></p>
+  <h1>{{ project.title }}</h1>
+  <p>{{ project.description }}</p>
+  <p><strong>申请条件：</strong>{{ project.eligibility }}</p>
+  <p><strong>截止日期：</strong>{{ project.deadline }}</p>
+  {% if not is_open %}<p class="muted">该项目已截止申请。</p>
+  {% elif session.get('role') == 'student' %}<a class="button" href="{{ url_for('apply', project_id=project.id) }}">申请此项目</a>
+  {% elif not session.get('user_id') %}<a class="button" href="{{ url_for('login') }}">登录后申请</a>{% endif %}
+</div>
+{% endblock %}

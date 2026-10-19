@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}首页｜奖助学金管理{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>奖助学金管理子系统</h1>
+  <p>围绕“查看通知与项目—提交申请—上传材料—辅导员审批—查询结果”构建申请核心闭环。</p>
+  <p><a class="button" href="{{ url_for('projects') }}">查看可申请项目</a> <a class="button" href="{{ url_for('notices') }}">查看通知</a></p>
+</div>
+<div class="grid">
+  <div class="card"><h3>学生端</h3><p>填写申请、上传证明材料、查询申请进度。</p></div>
+  <div class="card"><h3>辅导员端</h3><p>查看申请信息、填写审批意见、更新处理结果。</p></div>
+  <div class="card"><h3>Sprint 范围</h3><p>实现 US01、US02、US03、US04、US05、US08。</p></div>
+</div>
+<div class="card">
+  <h3>演示账号</h3>
+  <p>学生：<code>student / student123</code></p>
+  <p>辅导员：<code>counselor / counselor123</code></p>
+  <p class="muted">仅供本地课程演示。生产系统应使用安全的密码存储和配置。</p>
+</div>
+{% endblock %}

@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}错误 {{ code }}{% endblock %}
+{% block content %}
+<div class="card"><h1>错误 {{ code }}</h1><p>{{ message }}</p><a class="button" href="{{ url_for('index') }}">返回首页</a></div>
+{% endblock %}

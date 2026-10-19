@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}上传证明材料{% endblock %}
+{% block content %}
+<div class="card">
+<h1>上传证明材料</h1><p>项目：{{ application.project_title }} · 申请编号：{{ application.id }}</p>
+<p class="muted">允许 PDF、PNG、JPG、JPEG，单文件最大 5 MB。</p>
+{% if allow_upload %}
+<form method="post" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>选择文件<input type="file" name="material" accept=".pdf,.png,.jpg,.jpeg" required></label>
+  <button type="submit">上传材料</button>
+</form>
+{% else %}
+<p class="warning flash">当前申请状态为“{{ application.status }}”，不能继续上传材料。</p>
+{% endif %}
+<h3>已上传材料</h3>
+<ul>{% for item in materials %}<li><a href="{{ url_for('download_material', material_id=item.id) }}">{{ item.original_name }}</a>（{{ item.uploaded_at }}）</li>{% else %}<li>暂未上传材料</li>{% endfor %}</ul>
+<p><a class="button secondary" href="{{ url_for('dashboard') }}">返回申请面板</a></p>
+</div>
+{% endblock %}

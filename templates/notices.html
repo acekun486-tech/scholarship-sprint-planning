@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}通知公告{% endblock %}
+{% block content %}
+<h1>奖助学金通知</h1>
+{% for notice in notices %}
+<div class="card"><h3>{{ notice.title }}</h3><p>{{ notice.content }}</p><small class="muted">发布时间：{{ notice.published_at }}</small></div>
+{% else %}<p>暂无通知。</p>{% endfor %}
+{% endblock %}
