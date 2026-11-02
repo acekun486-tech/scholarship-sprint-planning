@@ -45,8 +45,12 @@ def create_app(test_config=None):
     app = Flask(__name__)
     app.config.from_mapping(
         SECRET_KEY=os.environ.get("SECRET_KEY") or secrets.token_hex(32),
-        DATABASE=str(BASE_DIR / "scholarship.db"),
-        UPLOAD_FOLDER=str(BASE_DIR / "uploads"),
+        DATABASE=os.environ.get(
+            "DATABASE_PATH", str(BASE_DIR / "scholarship.db")
+        ),
+        UPLOAD_FOLDER=os.environ.get(
+            "UPLOAD_FOLDER", str(BASE_DIR / "uploads")
+        ),
         MAX_CONTENT_LENGTH=MAX_REQUEST_BYTES,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
@@ -138,6 +142,11 @@ def _register_routes(app):
     @app.get("/")
     def index():
         return render_template("index.html")
+
+    @app.get("/healthz")
+    def healthz():
+        get_db().execute("SELECT 1").fetchone()
+        return {"status": "ok"}, 200
 
     @app.route("/login", methods=["GET", "POST"])
     def login():

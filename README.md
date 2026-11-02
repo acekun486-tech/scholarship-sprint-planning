@@ -2,6 +2,14 @@
 
 本项目依据软件项目管理实验二的 Sprint Planning 实现，跑通“通知与项目查询—提交申请—上传材料—辅导员审批—学生查询结果”的核心闭环。
 
+## 界面预览
+
+![奖助学金管理子系统首页](docs/screenshots/homepage.png)
+
+GitHub 仓库页面只能展示源码和静态图片，不能直接执行 Flask、SQLite 或表单提交。若需要在浏览器中体验完整交互，需要把应用部署到支持 Python 的云平台；GitHub Pages 仅适合静态页面，无法替代本项目后端。
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/acekun486-tech/scholarship-sprint-planning)
+
 ## Sprint 范围
 
 | 用户故事 | 实现内容 | 页面或接口 |
@@ -40,6 +48,9 @@ templates/            页面模板
 tests/test_app.py     业务、权限、上传与审批自动化测试
 docs/                 Sprint Backlog、验收清单和测试记录
 uploads/              本地材料存储目录
+render.yaml           Render 在线部署配置
+Procfile              通用 Python Web 启动配置
+.devcontainer/        GitHub Codespaces 一键环境
 ```
 
 ## 本地运行
@@ -58,6 +69,34 @@ python app.py
 
 首次启动会创建 `scholarship.db` 并写入演示数据。旧版本创建的明文演示密码会在初始化时自动升级为哈希密码。
 
+## 在线展示
+
+### GitHub Codespaces
+
+1. 在仓库页面选择 `Code → Codespaces → Create codespace on main`。
+2. 等待环境安装完成，在终端执行：
+
+```bash
+FLASK_HOST=0.0.0.0 python app.py
+```
+
+3. 在 `Ports` 面板打开 `5000` 端口，并把可见性设为 `Public`。
+4. 使用生成的 `*.app.github.dev` 地址访问完整应用。
+
+Codespaces 适合临时演示，停止或删除 Codespace 后地址即失效。
+
+### Render
+
+点击上方的 `Deploy to Render`，或按 [部署说明](docs/deployment.md) 手动创建 Web Service。生产启动命令为：
+
+```text
+gunicorn app:app --bind 0.0.0.0:$PORT
+```
+
+部署完成后，把 Render 提供的公开地址填入 GitHub 仓库右侧 `About → Website`，即可从仓库首页进入在线系统。
+
+Render 默认文件系统是临时存储；如需保留申请和上传材料，需要挂载持久化磁盘并配置 `DATABASE_PATH`、`UPLOAD_FOLDER`。详细步骤见 [部署说明](docs/deployment.md)。
+
 ## 演示账号
 
 | 角色 | 用户名 | 密码 |
@@ -73,7 +112,7 @@ python app.py
 .\.venv\Scripts\python.exe -m pytest -q --cov --cov-report=term-missing
 ```
 
-当前测试结果为 20 passed，总覆盖率 88%。实际执行记录见 `docs/test-report.md`。
+当前测试结果为 22 passed，总覆盖率 88%。实际执行记录见 `docs/test-report.md`。
 
 ## 安全与权限
 

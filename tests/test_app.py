@@ -80,6 +80,32 @@ def test_public_pages_search_and_security_headers(client):
     assert "没有找到符合条件的项目".encode() in response.data
 
 
+def test_health_check(client):
+    response = client.get("/healthz")
+    assert response.status_code == 200
+    assert response.get_json() == {"status": "ok"}
+
+
+def test_deployment_paths_come_from_environment(tmp_path, monkeypatch):
+    database_path = tmp_path / "runtime" / "app.db"
+    upload_path = tmp_path / "runtime" / "uploads"
+    monkeypatch.setenv("DATABASE_PATH", str(database_path))
+    monkeypatch.setenv("UPLOAD_FOLDER", str(upload_path))
+
+    application = create_app(
+        {
+            "TESTING": True,
+            "SECRET_KEY": "deployment-path-test",
+            "WTF_CSRF_ENABLED": False,
+        }
+    )
+
+    assert application.config["DATABASE"] == str(database_path)
+    assert application.config["UPLOAD_FOLDER"] == str(upload_path)
+    assert database_path.is_file()
+    assert upload_path.is_dir()
+
+
 def test_login_uses_hashed_password(app, client):
     response = login(client)
     assert response.status_code == 200

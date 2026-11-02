@@ -1,0 +1,20 @@
+{
+  "name": "Scholarship Sprint Planning",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.13-bookworm",
+  "postCreateCommand": "python -m pip install --upgrade pip && pip install -r requirements.txt",
+  "forwardPorts": [5000],
+  "portsAttributes": {
+    "5000": {
+      "label": "Flask app",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python"
+      ]
+    }
+  }
+}

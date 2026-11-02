@@ -8,3 +8,6 @@ uploads/*
 !uploads/.gitkeep
 .pytest_cache/
 .coverage
+.playwright-cli/
+output/
+data/

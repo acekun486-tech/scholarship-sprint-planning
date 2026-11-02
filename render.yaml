@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: scholarship-sprint-planning
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SESSION_COOKIE_SECURE
+        value: "1"
+      - key: DATABASE_PATH
+        value: data/scholarship.db
+      - key: UPLOAD_FOLDER
+        value: data/uploads
