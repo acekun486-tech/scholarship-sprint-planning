@@ -1,6 +1,8 @@
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+# 保证 pytest 控制台脚本与 python -m pytest 都能导入仓库根目录的 app.py / database.py
+pythonpath = ["."]
 
 [tool.ruff]
 line-length = 100

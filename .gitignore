@@ -8,6 +8,8 @@ uploads/*
 !uploads/.gitkeep
 .pytest_cache/
 .coverage
+coverage.xml
+htmlcov/
 .playwright-cli/
 output/
 data/

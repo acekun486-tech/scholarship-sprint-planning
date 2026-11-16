@@ -39,10 +39,10 @@ jobs:
 
       - name: Tests and coverage
         run: |
-          pytest -q --cov --cov-report=term-missing \
+          python -m pytest -q --cov --cov-report=term-missing \
             --cov-report=xml --cov-report=html --cov-fail-under=80
-          coverage report --include="app.py" --fail-under=80
-          coverage report --include="database.py" --fail-under=80
+          python -m coverage report --include="app.py" --fail-under=80
+          python -m coverage report --include="database.py" --fail-under=80
 
       - name: Incremental coverage (pull requests)
         if: github.event_name == 'pull_request'
