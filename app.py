@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import re
 import secrets
@@ -8,6 +9,7 @@ import uuid
 from datetime import date
 from functools import wraps
 from pathlib import Path
+from typing import NamedTuple
 
 from flask import (
     Flask,
@@ -35,10 +37,21 @@ FILE_SIGNATURES = {
 }
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 MAX_REQUEST_BYTES = MAX_UPLOAD_BYTES + (512 * 1024)
+MAX_NAME_LENGTH = 80
+MAX_STUDENT_NO_LENGTH = 40
+MAX_REASON_LENGTH = 2000
+MAX_REVIEW_COMMENT_LENGTH = 1000
+MAX_ORIGINAL_NAME_LENGTH = 180
 UPLOADABLE_STATUSES = {"待审批", "退回补充材料"}
 REVIEW_DECISIONS = ("通过", "退回补充材料", "不通过")
 
 csrf = CSRFProtect()
+
+
+class ValidatedUpload(NamedTuple):
+    original_name: str
+    extension: str
+    content: bytes
 
 
 def create_app(test_config=None):
@@ -93,11 +106,36 @@ def allowed_file(filename):
 def safe_original_name(filename):
     name = filename.replace("\\", "/").rsplit("/", 1)[-1]
     name = re.sub(r"[\x00-\x1f\x7f]", "", name).strip()
-    return name[:180] or "未命名材料"
+    return name[:MAX_ORIGINAL_NAME_LENGTH] or "未命名材料"
 
 
 def file_matches_extension(extension, content):
     return content.startswith(FILE_SIGNATURES[extension])
+
+
+def validate_upload(material):
+    """Validate one uploaded file and return (ValidatedUpload, error message)."""
+    if not material or not material.filename:
+        return None, "请选择需要上传的证明材料。"
+
+    original_name = safe_original_name(material.filename)
+    if not allowed_file(original_name):
+        return None, "仅允许上传 PDF、PNG、JPG、JPEG 文件。"
+
+    extension = original_name.rsplit(".", 1)[1].lower()
+    content = material.read(MAX_UPLOAD_BYTES + 1)
+    if len(content) > MAX_UPLOAD_BYTES:
+        return None, "单个材料不能超过 5 MB。"
+    if not content:
+        return None, "上传文件不能为空。"
+    if not file_matches_extension(extension, content):
+        return None, "文件内容与扩展名不匹配，请上传真实的有效材料。"
+    return ValidatedUpload(original_name, extension, content), None
+
+
+def escape_like(value):
+    """Escape LIKE wildcards so user input is matched literally."""
+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
 
 def project_is_open(project):
@@ -110,27 +148,29 @@ def project_is_open(project):
 def validate_application_form(full_name, student_no, reason):
     if not full_name or not student_no or not reason:
         return "姓名、学号和申请理由均为必填项。"
-    if len(full_name) > 80:
-        return "姓名不能超过 80 个字符。"
-    if len(student_no) > 40 or any(char.isspace() for char in student_no):
-        return "学号不能包含空格，且不能超过 40 个字符。"
-    if len(reason) > 2000:
-        return "申请理由不能超过 2000 个字符。"
+    if len(full_name) > MAX_NAME_LENGTH:
+        return f"姓名不能超过 {MAX_NAME_LENGTH} 个字符。"
+    if len(student_no) > MAX_STUDENT_NO_LENGTH or any(
+        char.isspace() for char in student_no
+    ):
+        return f"学号不能包含空格，且不能超过 {MAX_STUDENT_NO_LENGTH} 个字符。"
+    if len(reason) > MAX_REASON_LENGTH:
+        return f"申请理由不能超过 {MAX_REASON_LENGTH} 个字符。"
     return None
 
 
 def materials_by_application(db, application_ids):
+    """Group materials by application using one parameterized JSON query."""
     if not application_ids:
         return {}
-    placeholders = ",".join("?" for _ in application_ids)
     rows = db.execute(
-        f"""
+        """
         SELECT id, application_id, original_name, uploaded_at
         FROM materials
-        WHERE application_id IN ({placeholders})
+        WHERE application_id IN (SELECT value FROM json_each(?))
         ORDER BY id DESC
         """,
-        tuple(application_ids),
+        (json.dumps(list(application_ids)),),
     ).fetchall()
     grouped = {}
     for row in rows:
@@ -138,7 +178,7 @@ def materials_by_application(db, application_ids):
     return grouped
 
 
-def _register_routes(app):
+def _register_routes(app):  # noqa: PLR0915 - 路由表集中声明，详见质量扫描记录
     @app.get("/")
     def index():
         return render_template("index.html")
@@ -209,11 +249,13 @@ def _register_routes(app):
         query = request.args.get("q", "").strip()
         db = get_db()
         if query:
-            pattern = f"%{query}%"
+            pattern = f"%{escape_like(query)}%"
             rows = db.execute(
                 """
                 SELECT * FROM projects
-                WHERE title LIKE ? OR description LIKE ? OR eligibility LIKE ?
+                WHERE title LIKE ? ESCAPE '\\'
+                   OR description LIKE ? ESCAPE '\\'
+                   OR eligibility LIKE ? ESCAPE '\\'
                 ORDER BY id
                 """,
                 (pattern, pattern, pattern),
@@ -316,31 +358,14 @@ def _register_routes(app):
                 flash("当前申请状态不允许继续上传材料。", "warning")
                 return redirect(url_for("dashboard"))
 
-            material = request.files.get("material")
-            if not material or not material.filename:
-                flash("请选择需要上传的证明材料。", "danger")
+            upload, error = validate_upload(request.files.get("material"))
+            if error:
+                flash(error, "danger")
                 return redirect(request.url)
 
-            original_name = safe_original_name(material.filename)
-            if not allowed_file(original_name):
-                flash("仅允许上传 PDF、PNG、JPG、JPEG 文件。", "danger")
-                return redirect(request.url)
-
-            extension = original_name.rsplit(".", 1)[1].lower()
-            content = material.read(MAX_UPLOAD_BYTES + 1)
-            if len(content) > MAX_UPLOAD_BYTES:
-                flash("单个材料不能超过 5 MB。", "danger")
-                return redirect(request.url)
-            if not content:
-                flash("上传文件不能为空。", "danger")
-                return redirect(request.url)
-            if not file_matches_extension(extension, content):
-                flash("文件内容与扩展名不匹配，请上传真实的有效材料。", "danger")
-                return redirect(request.url)
-
-            stored_name = f"{uuid.uuid4().hex}.{extension}"
+            stored_name = f"{uuid.uuid4().hex}.{upload.extension}"
             target = Path(app.config["UPLOAD_FOLDER"]) / stored_name
-            target.write_bytes(content)
+            target.write_bytes(upload.content)
             try:
                 db.execute(
                     """
@@ -348,7 +373,7 @@ def _register_routes(app):
                         (application_id, original_name, stored_name)
                     VALUES (?, ?, ?)
                     """,
-                    (application_id, original_name, stored_name),
+                    (application_id, upload.original_name, stored_name),
                 )
                 if application["status"] == "退回补充材料":
                     db.execute(
@@ -389,7 +414,9 @@ def _register_routes(app):
         """, (material_id,)).fetchone()
         if not material:
             abort(404)
-        if session["role"] == "student" and material["student_id"] != session["user_id"]:
+        is_student = session["role"] == "student"
+        is_owner = material["student_id"] == session["user_id"]
+        if is_student and not is_owner:
             abort(404)
 
         upload_dir = Path(app.config["UPLOAD_FOLDER"]).resolve()
@@ -433,8 +460,11 @@ def _register_routes(app):
         if not comment:
             flash("请填写审批意见。", "danger")
             return redirect(url_for("counselor_applications"))
-        if len(comment) > 1000:
-            flash("审批意见不能超过 1000 个字符。", "danger")
+        if len(comment) > MAX_REVIEW_COMMENT_LENGTH:
+            flash(
+                f"审批意见不能超过 {MAX_REVIEW_COMMENT_LENGTH} 个字符。",
+                "danger",
+            )
             return redirect(url_for("counselor_applications"))
 
         db = get_db()
