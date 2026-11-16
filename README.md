@@ -1,4 +1,4 @@
-# 高校学工平台——奖助学金管理子系统
+# 高校学工平台——奖助学金管理子系统（实验三协作版）
 
 [![Quality Gate](https://github.com/acekun486-tech/scholarship-sprint-planning/actions/workflows/quality.yml/badge.svg)](https://github.com/acekun486-tech/scholarship-sprint-planning/actions/workflows/quality.yml)
 [![Tests](https://img.shields.io/badge/tests-40%20passed-brightgreen)](docs/test-report.md)
