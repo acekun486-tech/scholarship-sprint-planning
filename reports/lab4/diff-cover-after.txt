@@ -1,0 +1,12 @@
+-------------
+Diff Coverage
+Diff: HEAD...HEAD, staged and unstaged changes
+-------------
+app.py (100%)
+database.py (100%)
+-------------
+Total:   49 lines
+Missing: 0 lines
+Coverage: 100%
+-------------
+

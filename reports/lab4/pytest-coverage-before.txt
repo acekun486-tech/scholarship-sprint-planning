@@ -1,0 +1,13 @@
+......................                                                   [100%]
+=============================== tests coverage ================================
+_______________ coverage: platform win32, python 3.14.6-final-0 _______________
+
+Name          Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------------
+app.py          282     28     74     14    88%   78-79, 106-107, 114, 118, 153->167, 236, 251, 289-292, 297, 321-322, 363-366, 391, 398, 432, 437-438, 445, 458, 471, 491
+database.py      36      4     10      2    87%   9->15, 70-72, 121
+---------------------------------------------------------
+TOTAL           318     32     84     16    88%
+Coverage XML written to file reports/lab4/coverage-before.xml
+Coverage JSON written to file reports/lab4/coverage-before.json
+22 passed in 8.13s
