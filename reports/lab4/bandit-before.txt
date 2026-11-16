@@ -1,0 +1,44 @@
+# Bandit baseline
+python.exe -m bandit 1.9.4
+  python version = 3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.14.6
+Run started:2026-11-15 15:47:32.637003+00:00
+
+Test results:
+>> Issue: [B608:hardcoded_sql_expressions] Possible SQL injection vector through string-based query construction.
+   Severity: Medium   Confidence: Medium
+   CWE: CWE-89 (https://cwe.mitre.org/data/definitions/89.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html
+   Location: .\app.py:127:12
+126	    rows = db.execute(
+127	        f"""
+128	        SELECT id, application_id, original_name, uploaded_at
+129	        FROM materials
+130	        WHERE application_id IN ({placeholders})
+131	        ORDER BY id DESC
+132	        """,
+133	        tuple(application_ids),
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 572
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 1
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 1
+		High: 0
+Files skipped (0):

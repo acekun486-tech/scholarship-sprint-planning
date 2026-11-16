@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import date, timedelta
 from pathlib import Path
 
 from flask import current_app, g
@@ -75,6 +76,7 @@ def init_db():
         )
 
     if db.execute("SELECT COUNT(*) FROM users").fetchone()[0] == 0:
+        today = date.today()
         db.executemany(
             "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
             [
@@ -85,24 +87,30 @@ def init_db():
         db.executemany(
             "INSERT INTO notices (title, content) VALUES (?, ?)",
             [
-                ("2026年度奖学金申请通知", "请符合条件的学生在截止日期前提交申请及证明材料。"),
+                (
+                    f"{today.year}年度奖学金申请通知",
+                    "请符合条件的学生在截止日期前提交申请及证明材料。",
+                ),
                 ("助学金材料提交提醒", "请检查材料是否清晰、完整，并确保信息真实。"),
             ],
         )
         db.executemany(
-            "INSERT INTO projects (title, description, eligibility, deadline) VALUES (?, ?, ?, ?)",
+            """
+            INSERT INTO projects (title, description, eligibility, deadline)
+            VALUES (?, ?, ?, ?)
+            """,
             [
                 (
                     "优秀学生奖学金",
                     "面向学习表现和综合表现优秀的在校学生。",
                     "在校学生；具体条件以学校正式通知为准。",
-                    "2026-11-15",
+                    (today + timedelta(days=30)).isoformat(),
                 ),
                 (
                     "国家助学金（示例）",
                     "面向符合学校认定条件、需要资助的学生。",
                     "需按学校规定完成家庭经济困难认定。",
-                    "2026-11-20",
+                    (today + timedelta(days=45)).isoformat(),
                 ),
             ],
         )

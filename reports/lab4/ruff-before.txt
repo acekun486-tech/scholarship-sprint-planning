@@ -1,0 +1,94 @@
+# Ruff baseline (E,F,W,B,S,UP,PLR; E501 excluded)
+ruff 0.17.5
+app.py:113:25: PLR2004 Magic value used in comparison, consider replacing `80` with a constant variable
+app.py:115:26: PLR2004 Magic value used in comparison, consider replacing `40` with a constant variable
+app.py:117:22: PLR2004 Magic value used in comparison, consider replacing `2000` with a constant variable
+app.py:127:9: S608 Possible SQL injection vector through string-based query construction
+app.py:141:5: PLR0915 Too many statements (145 > 50)
+app.py:303:9: PLR0911 Too many return statements (8 > 6)
+app.py:436:27: PLR2004 Magic value used in comparison, consider replacing `1000` with a constant variable
+tests\test_app.py:32:48: S107 Possible hardcoded password assigned to function default: "password"
+tests\test_app.py:73:9: S101 Use of `assert` detected
+tests\test_app.py:73:40: PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
+tests\test_app.py:74:9: S101 Use of `assert` detected
+tests\test_app.py:75:9: S101 Use of `assert` detected
+tests\test_app.py:78:5: S101 Use of `assert` detected
+tests\test_app.py:80:5: S101 Use of `assert` detected
+tests\test_app.py:85:5: S101 Use of `assert` detected
+tests\test_app.py:85:36: PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
+tests\test_app.py:86:5: S101 Use of `assert` detected
+tests\test_app.py:103:5: S101 Use of `assert` detected
+tests\test_app.py:104:5: S101 Use of `assert` detected
+tests\test_app.py:105:5: S101 Use of `assert` detected
+tests\test_app.py:106:5: S101 Use of `assert` detected
+tests\test_app.py:111:5: S101 Use of `assert` detected
+tests\test_app.py:111:36: PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
+tests\test_app.py:112:5: S101 Use of `assert` detected
+tests\test_app.py:118:9: S101 Use of `assert` detected
+tests\test_app.py:118:36: S105 Possible hardcoded password assigned to: "password"
+tests\test_app.py:119:9: S101 Use of `assert` detected
+tests\test_app.py:123:30: S106 Possible hardcoded password assigned to argument: "password"
+tests\test_app.py:124:5: S101 Use of `assert` detected
+tests\test_app.py:124:36: PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
+tests\test_app.py:125:5: S101 Use of `assert` detected
+tests\test_app.py:131:5: S101 Use of `assert` detected
+tests\test_app.py:131:36: PLR2004 Magic value used in comparison, consider replacing `302` with a constant variable
+tests\test_app.py:132:5: S101 Use of `assert` detected
+tests\test_app.py:135:5: S101 Use of `assert` detected
+tests\test_app.py:136:5: S101 Use of `assert` detected
+tests\test_app.py:145:5: S101 Use of `assert` detected
+tests\test_app.py:145:36: PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
+tests\test_app.py:146:5: S101 Use of `assert` detected
+tests\test_app.py:152:5: S101 Use of `assert` detected
+tests\test_app.py:152:36: PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
+tests\test_app.py:153:5: S101 Use of `assert` detected
+tests\test_app.py:154:5: S101 Use of `assert` detected
+tests\test_app.py:161:5: S101 Use of `assert` detected
+tests\test_app.py:161:36: PLR2004 Magic value used in comparison, consider replacing `302` with a constant variable
+tests\test_app.py:166:5: S101 Use of `assert` detected
+tests\test_app.py:180:5: S101 Use of `assert` detected
+tests\test_app.py:180:36: PLR2004 Magic value used in comparison, consider replacing `302` with a constant variable
+tests\test_app.py:181:5: S101 Use of `assert` detected
+tests\test_app.py:182:5: S101 Use of `assert` detected
+tests\test_app.py:194:5: S101 Use of `assert` detected
+tests\test_app.py:194:36: PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
+tests\test_app.py:195:5: S101 Use of `assert` detected
+tests\test_app.py:198:5: S101 Use of `assert` detected
+tests\test_app.py:199:5: S101 Use of `assert` detected
+tests\test_app.py:202:5: S101 Use of `assert` detected
+tests\test_app.py:202:36: PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
+tests\test_app.py:203:5: S101 Use of `assert` detected
+tests\test_app.py:208:5: S101 Use of `assert` detected
+tests\test_app.py:208:36: PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
+tests\test_app.py:209:5: S101 Use of `assert` detected
+tests\test_app.py:231:5: S101 Use of `assert` detected
+tests\test_app.py:232:5: S101 Use of `assert` detected
+tests\test_app.py:245:5: S101 Use of `assert` detected
+tests\test_app.py:246:5: S101 Use of `assert` detected
+tests\test_app.py:269:5: S101 Use of `assert` detected
+tests\test_app.py:269:64: PLR2004 Magic value used in comparison, consider replacing `404` with a constant variable
+tests\test_app.py:270:5: S101 Use of `assert` detected
+tests\test_app.py:270:70: PLR2004 Magic value used in comparison, consider replacing `404` with a constant variable
+tests\test_app.py:275:5: S101 Use of `assert` detected
+tests\test_app.py:275:65: PLR2004 Magic value used in comparison, consider replacing `403` with a constant variable
+tests\test_app.py:290:5: S101 Use of `assert` detected
+tests\test_app.py:290:12: UP012 [*] Unnecessary call to `encode` as UTF-8
+tests\test_app.py:296:5: S101 Use of `assert` detected
+tests\test_app.py:297:5: S101 Use of `assert` detected
+tests\test_app.py:302:5: S101 Use of `assert` detected
+tests\test_app.py:303:5: S101 Use of `assert` detected
+tests\test_app.py:320:5: S101 Use of `assert` detected
+tests\test_app.py:322:5: S101 Use of `assert` detected
+tests\test_app.py:323:5: S101 Use of `assert` detected
+tests\test_app.py:336:5: S101 Use of `assert` detected
+tests\test_app.py:337:5: S101 Use of `assert` detected
+tests\test_app.py:358:5: S101 Use of `assert` detected
+tests\test_app.py:360:5: S101 Use of `assert` detected
+tests\test_app.py:361:5: S101 Use of `assert` detected
+tests\test_app.py:382:5: S101 Use of `assert` detected
+tests\test_app.py:383:5: S101 Use of `assert` detected
+tests\test_app.py:401:5: S101 Use of `assert` detected
+tests\test_app.py:401:36: PLR2004 Magic value used in comparison, consider replacing `400` with a constant variable
+tests\test_app.py:402:5: S101 Use of `assert` detected
+Found 90 errors.
+[*] 1 fixable with `--fix`.

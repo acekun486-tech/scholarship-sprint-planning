@@ -1,6 +1,13 @@
 # 高校学工平台——奖助学金管理子系统
 
-本项目依据软件项目管理实验二的 Sprint Planning 实现，跑通“通知与项目查询—提交申请—上传材料—辅导员审批—学生查询结果”的核心闭环。
+[![Quality Gate](https://github.com/acekun486-tech/scholarship-sprint-planning/actions/workflows/quality.yml/badge.svg)](https://github.com/acekun486-tech/scholarship-sprint-planning/actions/workflows/quality.yml)
+[![Tests](https://img.shields.io/badge/tests-40%20passed-brightgreen)](docs/test-report.md)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](docs/quality/coverage-record.md)
+[![Version](https://img.shields.io/badge/release-v1.0.0-blue)](docs/release-notes-v1.0.0.md)
+
+本项目依据软件项目管理实验二的 Sprint Planning 实现，跑通“通知与项目查询—提交申请—上传材料—辅导员审批—学生查询结果”的核心闭环。实验三补充每日站会、配置管理与发布记录，实验四补充覆盖率、静态扫描、代码评审、缺陷响应与质量门禁。
+
+> **发布基线**：`v1.0.0`（2026-11-16）。功能、质量数据与已知问题见 [v1.0.0 发布说明](docs/release-notes-v1.0.0.md)。
 
 ## 界面预览
 
@@ -46,7 +53,12 @@ app.py                应用工厂、路由、校验、权限和上传处理
 database.py           表结构、种子数据、旧密码迁移和连接清理
 templates/            页面模板
 tests/test_app.py     业务、权限、上传与审批自动化测试
-docs/                 Sprint Backlog、验收清单和测试记录
+docs/                 Sprint Backlog、验收清单、站会、配置项、变更控制和质量记录
+docs/quality/         覆盖率、静态扫描、代码评审、缺陷台账与质量报告
+reports/lab4/         质量扫描与覆盖率的原始证据
+.github/workflows/    CI 质量门禁
+scripts/quality.ps1   本地一键质量检查
+tools/                覆盖率函数级度量脚本
 uploads/              本地材料存储目录
 render.yaml           Render 在线部署配置
 Procfile              通用 Python Web 启动配置
@@ -106,13 +118,31 @@ Render 默认文件系统是临时存储；如需保留申请和上传材料，�
 
 演示密码只用于课程环境。用户密码在数据库中保存为 Werkzeug 哈希，不保存明文。
 
-## 测试
+## 测试与质量
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q --cov --cov-report=term-missing
+.\scripts\quality.ps1
 ```
 
-当前测试结果为 22 passed，总覆盖率 88%。实际执行记录见 `docs/test-report.md`。
+当前结果：**40 passed**，语句/分支/函数/行覆盖率 **100%**，Ruff 0 项，Bandit 0 Blocker/Critical，重复代码 0%，最大圈复杂度 9。CI 在每次 push 和 PR 时执行 Ruff、Bandit、覆盖率门槛（核心 ≥80%）与增量覆盖率检查（PR ≥60%）。
+
+- [测试记录](docs/test-report.md)
+- [覆盖率记录](docs/quality/coverage-record.md)
+- [静态扫描记录](docs/quality/static-scan.md)
+- [代码评审记录](docs/quality/code-review-record.md)
+- [缺陷响应台账](docs/quality/defect-ledger.md)
+- [一页质量报告](docs/quality/quality-report.md)
+
+## 过程与配置管理
+
+- [团队角色与协作约定](docs/team-roles.md)
+- [每日站会记录](docs/standup-records.md)
+- [配置项清单](docs/configuration-items.md)
+- [变更控制记录](docs/change-control.md)
+- [合并冲突演练记录](docs/git-conflict-exercise.md)
+- [Sprint Backlog](docs/sprint-backlog.md)
+- [验收检查清单](docs/acceptance-checklist.md)
 
 ## 安全与权限
 
@@ -126,6 +156,6 @@ Render 默认文件系统是临时存储；如需保留申请和上传材料，�
 
 ## DoD 与课程边界
 
-核心故事具备自动化测试、错误提示、角色权限、材料关联和运行文档。提交前仍需按 `docs/acceptance-checklist.md` 演示，由至少一名其他成员完成代码评审，并由 PO 对照故事验收标准确认。
+核心故事具备自动化测试、错误提示、角色权限、材料关联和运行文档。自动化质量门禁已通过；`docs/acceptance-checklist.md` 中的“团队第二成员代码评审”仍待评审人确认，因此质量报告结论为“有条件合并”。
 
-本项目仍是课程原型：SQLite 和本地文件存储适合单机演示，未覆盖生产部署所需的对象存储、病毒扫描、审计日志、备份、邮件提醒、管理员名额维护和公示流程。
+本项目仍是课程原型：SQLite 和本地文件存储适合单机演示，未覆盖生产部署所需的对象存储、病毒扫描、审计日志、备份、邮件提醒、管理员名额维护和公示流程。演示账号的固定口令仅限课程环境使用。

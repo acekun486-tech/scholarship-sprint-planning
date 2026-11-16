@@ -1,0 +1,3 @@
+# Ruff final (pyproject rules)
+ruff 0.17.5
+All checks passed!
