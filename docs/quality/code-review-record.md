@@ -43,7 +43,7 @@
 - [x] PR 描述写清“改了什么、为什么改、怎么验证”
 - [x] 至少 3 条评审意见指明文件与行
 - [x] 作者逐条回复“已改”或“不改 + 理由”
-- [x] CI 质量门禁通过（Ruff / Bandit / pytest / coverage）
+- [x] CI 质量门禁通过（[run 43804599171](https://github.com/acekun486-tech/scholarship-sprint-planning/actions/runs/43804599171)：Ruff / Bandit / pytest / coverage 全绿）
 - [ ] 至少 1 名其他成员 approve（待评审人确认）
 - [ ] 合并后删除 `feature/quality-gate` 分支（待合并执行）
 

@@ -12,7 +12,7 @@
 | 单元测试覆盖率 | 增量 ≥60%，核心 ≥80% | 核心 `app.py` / `database.py` 均 100%；增量 49 行全部覆盖（100%）；40 条测试全通过 | **是** | 无；补测 18 条边界用例，覆盖率从 90.7% 提升到 100% |
 | 静态扫描 | 0 Blocker/Critical，Major ≤5，重复率 ≤3%，单函数 CC ≤10 | Blocker/Critical 0；Major 1（路由注册函数，已评审豁免）；重复率 0%；最大 CC 9 | **是** | 保留 1 项有理由的生产规则豁免；其余 8 项问题已修复 |
 | 代码评审 | ≥3 条意见闭环，至少 1 人 approve | 7 条意见全部指明文件与行；5 条已闭环、2 条“不改 + 理由”；第二人 approve 待确认 | **部分** | 待评审人在 PR 上 approve；其余检查项已完成 |
-| 缺陷响应 | 按时响应率 ≥90% | 6 条缺陷全部按时响应并关闭；响应率 100%；无超时 | **是** | 无；P1 在 8 分钟内关闭 |
+| 缺陷响应 | 按时响应率 ≥90% | 7 条缺陷全部按时响应并关闭；响应率 100%；无超时 | **是** | 无；两条 P1 分别在 8 分钟、12 分钟内关闭 |
 
 ## 关键数据
 
@@ -20,14 +20,15 @@
 - 增量覆盖：**49 行修改，0 行遗漏，100%**。
 - 静态扫描：Ruff `All checks passed`；Bandit High/Medium/Low 全 0；jscpd 0 clones；平均圈复杂度 A（2.65）。
 - 代码规模：约 600 SLOC；技术债务比率估算约 0.2%–0.6%。
-- 缺陷：P1 ×1、P2 ×4、P3 ×1；按时响应率 100%，按时关闭率 100%。
+- 缺陷：P1 ×2、P2 ×4、P3 ×1；按时响应率 100%，按时关闭率 100%。
 - 复跑修复：种子项目使用固定截止日期，到期后申请流程测试失败；已改为“当天 + 30/45 天”并新增回归测试，详见 `coverage-record.md` 的复跑说明。
+- CI 修复：`pytest` 控制台脚本未把仓库根目录加入 `sys.path`，收集阶段失败；改为 `python -m pytest`、`python -m coverage` 并配置 `pythonpath = ["."]` 后，[run 43804599171](https://github.com/acekun486-tech/scholarship-sprint-planning/actions/runs/43804599171) 的 Ruff、Bandit、测试与覆盖率步骤全部通过。
 
 ## 证据索引
 
 - [覆盖率记录](coverage-record.md)｜[扫描与修复记录](static-scan.md)｜[代码评审记录](code-review-record.md)｜[缺陷台账](defect-ledger.md)
 - 原始报告：`reports/lab4/`（coverage、Ruff、Bandit、Radon、jscpd、diff-cover）
-- CI 门禁：`.github/workflows/quality.yml`（push / pull_request 触发）
+- CI 门禁：`.github/workflows/quality.yml`（push / pull_request 触发）；发布后修复 run [43804599171](https://github.com/acekun486-tech/scholarship-sprint-planning/actions/runs/43804599171) 全绿
 
 ## 已知限制（不冒充已修复）
 
@@ -37,6 +38,6 @@
 
 ## 合并结论
 
-**有条件合并**：覆盖率、静态扫描、缺陷响应三项门禁全部达标，代码评审的 7 条意见已完成闭环或给出不改理由；唯一未满足项是“至少 1 名其他成员在 PR 上 approve”。满足该条件后，v1.0.0 可以合并发布。
+**有条件合并**：覆盖率、静态扫描、缺陷响应三项门禁全部达标，CI 门禁已在修复后全绿；代码评审的 7 条意见已完成闭环或给出不改理由。唯一未满足项是“至少 1 名其他成员在 PR 上 approve”，满足该条件后可完成本次合并验收并归档 v1.0.0。
 
 > 结论口径：不以“已自测”替代第二人评审；若评审人提出新问题，按 P1/P2 重新进入缺陷台账并复跑门禁。
